@@ -26,40 +26,33 @@ export const KakaoShareModal: React.FC<KakaoShareModalProps> = ({
   const generateDefaultSummary = () => {
     const parts = [];
     
-    parts.push(`📖 ${bibleData.reference}`);
+    parts.push('<QT 나눔>');
+    parts.push(bibleData.reference);
     parts.push('');
     
-    // 성경 본문 요약 (첫 구절만 또는 짧게)
+    // 말씀요약 (성경 본문을 2-3줄로 요약)
+    parts.push('<말씀요약>');
     const textLines = bibleData.text.split('\n').filter(line => line.trim());
     if (textLines.length > 0) {
-      const firstVerse = textLines[0].length > 80 ? textLines[0].substring(0, 80) + '...' : textLines[0];
-      parts.push(firstVerse);
-      parts.push('');
+      const summary = textLines.slice(0, 2).join(' ').substring(0, 150);
+      parts.push(summary + (summary.length >= 150 ? '...' : ''));
     }
+    parts.push('');
     
-    // 말씀관찰 요약
-    if (meditation.observation) {
-      parts.push('🔍 말씀관찰');
-      const obsLines = meditation.observation.split('\n').filter(line => line.trim());
-      const obsFirst = obsLines.find(line => line.includes('1.') || line.includes('1)'));
-      if (obsFirst) {
-        parts.push(obsFirst.length > 100 ? obsFirst.substring(0, 100) + '...' : obsFirst);
-      }
-      parts.push('');
-    }
+    // 와닿은 점, 느낀점, 말씀 적용내용
+    const allContent = [
+      meditation.observation || '',
+      meditation.interpretation || '',
+      meditation.application || ''
+    ].join('\n');
     
-    // 말씀적용 요약
-    if (meditation.application) {
-      parts.push('✨ 말씀적용');
-      const appLines = meditation.application.split('\n').filter(line => line.trim());
-      const appFirst = appLines.find(line => line.includes('1.') || line.includes('1)'));
-      if (appFirst) {
-        parts.push(appFirst.length > 100 ? appFirst.substring(0, 100) + '...' : appFirst);
-      }
-      parts.push('');
-    }
+    const contentLines = allContent.split('\n')
+      .filter(line => line.trim())
+      .filter(line => !line.includes('1.') && !line.includes('2.') && !line.includes('3.'))
+      .filter(line => !line.includes('1)') && !line.includes('2)') && !line.includes('3)'))
+      .slice(0, 3);
     
-    parts.push('💬 함께 은혜 나눠요!');
+    parts.push(contentLines.join('\n'));
     
     setSummary(parts.join('\n'));
   };
@@ -83,15 +76,27 @@ export const KakaoShareModal: React.FC<KakaoShareModalProps> = ({
       
       말씀관찰: ${meditation.observation || '없음'}
       
+      말씀해석: ${meditation.interpretation || '없음'}
+      
       말씀적용: ${meditation.application || '없음'}
       
       요구사항:
-      1. 카카오톡 메시지로 보내기 적합한 길이 (10-15줄 이내)
-      2. 이모지를 적절히 사용하여 가독성 높이기
-      3. 핵심 메시지만 간결하게 전달
-      4. 따뜻하고 격려하는 톤 유지
-      5. 성경 구절 인용 포함
+      1. 다음 형식으로 작성:
+      
+      <QT 나눔>
+      성경구절 (예: 시편 35)
+      
+      <말씀요약>
+      성경 본문을 2-3줄로 요약
+      
+      그 후 와닿은 점, 느낀점, 말씀 적용내용을 자연스럽게 작성
+      
+      2. 이모지는 절대 사용하지 말 것
+      3. 1, 2, 3 같은 번호 매기지 말 것
+      4. AI가 쓴 것처럼 형식적이지 않게, 자연스럽고 진솔하게 작성
+      5. 따뜻하고 격려하는 톤 유지
       6. 특수기호는 ', ", (), [], {}, <> 만 사용
+      7. 전체 길이는 10-15줄 이내
       `;
 
       const result = await geminiService.generateSummary(prompt);
