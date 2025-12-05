@@ -71,7 +71,7 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
             }`}
           >
             <span className="text-xl">{tab.icon}</span>
-            <span className="font-bold text-sm">{tab.label}</span>
+            <span className="font-bold text-base">{tab.label}</span>
             {activeTab === tab.id && (
               <div className="absolute bottom-0 left-0 w-full h-1 bg-amber-500"></div>
             )}
@@ -84,7 +84,7 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
           <div className="mb-4 flex justify-end gap-2">
             <button
               onClick={() => handleCopy(content[activeTab]!, tabs.find(t => t.id === activeTab)?.label || '')}
-              className="px-4 py-2 text-sm bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors flex items-center gap-1"
+              className="px-4 py-2 text-base bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors flex items-center gap-1"
               title="이 탭 내용 복사"
             >
               <span>📋</span> 복사
@@ -92,7 +92,7 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
             {(content.observation || content.interpretation || content.application) && (
               <button
                 onClick={handleShare}
-                className="px-4 py-2 text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition-colors flex items-center gap-1"
+                className="px-4 py-2 text-base bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition-colors flex items-center gap-1"
                 title="전체 내용 공유 링크 생성"
               >
                 <span>🔗</span> 공유

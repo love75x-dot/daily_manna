@@ -26,7 +26,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
         <h3 className="font-bold flex items-center gap-2 text-base">
           <span>💬</span> AI 신앙 동역자
         </h3>
-        <span className="text-sm opacity-70">성경적 답변 가이드</span>
+        <span className="text-base opacity-70">성경적 답변 가이드</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 bg-stone-50 space-y-4" ref={scrollRef}>
