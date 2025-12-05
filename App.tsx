@@ -4,6 +4,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { BibleSection } from './components/BibleSection';
 import { MeditationSection } from './components/MeditationSection';
 import { ChatSection } from './components/ChatSection';
+import { KakaoShareModal } from './components/KakaoShareModal';
 import { AppState, BibleData, ChatMessage, MeditationContent, TabType } from './types';
 import { GeminiService } from './services/geminiService';
 
@@ -27,6 +28,7 @@ export default function App() {
   });
 
   const [isSharedView, setIsSharedView] = useState(false);
+  const [showKakaoShare, setShowKakaoShare] = useState(false);
 
   // Load API Key from local storage on mount and check for shared content
   useEffect(() => {
@@ -258,7 +260,17 @@ ${state.meditation.application || state.meditation.observation || "함께 묵상
         )}
       </main>
 
-      {/* Floating Share Button - 카카오톡 공유 버튼 제거 */}
+      {/* 카카오톡 공유 버튼 */}
+      {!isSharedView && state.bibleData && (state.meditation.observation || state.meditation.interpretation || state.meditation.application) && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
+          <button 
+            onClick={() => setShowKakaoShare(true)}
+            className="flex items-center gap-2 bg-[#FEE500] hover:bg-[#FDD835] text-[#3c1e1e] px-6 py-3 rounded-full shadow-lg font-bold transition-transform hover:scale-105"
+          >
+            <span className="text-xl">💬</span> 카카오톡 공유
+          </button>
+        </div>
+      )}
 
       <SettingsModal 
         isOpen={state.showSettings}
@@ -266,6 +278,16 @@ ${state.meditation.application || state.meditation.observation || "함께 묵상
         apiKey={state.apiKey}
         onSaveKey={handleSaveKey}
       />
+
+      {state.bibleData && (
+        <KakaoShareModal
+          isOpen={showKakaoShare}
+          onClose={() => setShowKakaoShare(false)}
+          bibleData={state.bibleData}
+          meditation={state.meditation}
+          apiKey={state.apiKey}
+        />
+      )}
     </div>
   );
 }
