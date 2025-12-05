@@ -26,14 +26,17 @@ const SYSTEM_INSTRUCTION = `
 - 질문을 다시 반복하지 마세요.
 - 핵심 내용을 먼저 제시하고, 필요시 간단한 부연 설명을 추가하세요.
 
-특수기호 사용 규칙:
+특수기호 사용 규칙 (절대 준수):
 - 사용 가능한 특수기호: 작은따옴표('), 큰따옴표("), 괄호(()), 대괄호([]), 중괄호({}), 꺾쇠괄호(<>)
 - 절대 금지 특수기호: ★, ●, ■, ▶, ※, ◆, ✓, 별표, 물결표, 샵, 골뱅이 등
-- 절대 금지: 별표 1개(별), 별표 2개(볈볈), 언더스코어 1개(_), 언더스코어 2개(__) 등 모든 마크다운 강조 문법
-- 마크다운 문법을 절대 사용하지 마세요.
-- 강조가 필요한 경우 큰따옴표("")만 사용하세요.
+- 절대 절대 금지: 별표 기호(asterisk) 1개 또는 2개 사용 완전 금지. 어떤 상황에서도 별표를 사용하지 마세요.
+- 절대 금지: 언더스코어(_) 1개 또는 2개 사용 금지
+- 마크다운 강조 문법(별볈, 볈볈, _, __) 어떤 경우에도 절대 사용 금지
+- 강조가 필요한 경우 반드시 큰따옴표("")만 사용하세요.
 - 번호 매기기는 1. 2. 3. 형식으로만 사용하세요.
 - 항목 구분은 줄바꿈으로만 하세요.
+
+중요: 별표(별) 기호는 절대로, 어떤 이유로도, 어떤 맥락에서도 사용할 수 없습니다. 이는 가장 중요한 규칙입니다.
 `;
 
 export class GeminiService {
@@ -48,6 +51,16 @@ export class GeminiService {
   private getModel() {
     if (!this.ai) throw new Error("API Key가 설정되지 않았습니다.");
     return this.ai.models;
+  }
+
+  private removeAsterisks(text: string): string {
+    // 모든 별표 기호를 제거 (*, **, ___, 등)
+    return text
+      .replace(/\*\*/g, '')  // ** 제거
+      .replace(/\*/g, '')    // * 제거
+      .replace(/___/g, '')   // ___ 제거
+      .replace(/__/g, '')    // __ 제거
+      .replace(/_([^_\s])/g, '$1'); // 단일 _ 제거 (밑줄이 아닌 경우)
   }
 
   private normalizeBibleReference(reference: string): string {
@@ -118,7 +131,8 @@ export class GeminiService {
       }
     });
     
-    return result.text || "본문을 찾을 수 없습니다.";
+    const text = result.text || "본문을 찾을 수 없습니다.";
+    return this.removeAsterisks(text);
   }
 
   async getMeditation(type: TabType, bibleText: string): Promise<string> {
@@ -182,7 +196,8 @@ export class GeminiService {
       }
     });
 
-    return result.text || "묵상 내용을 생성하지 못했습니다.";
+    const text = result.text || "묵상 내용을 생성하지 못했습니다.";
+    return this.removeAsterisks(text);
   }
 
   async getChatResponse(history: {role: string, parts: {text: string}[]}[], question: string): Promise<string> {
@@ -201,7 +216,8 @@ export class GeminiService {
       message: question
     });
 
-    return result.text || "답변을 생성할 수 없습니다.";
+    const text = result.text || "답변을 생성할 수 없습니다.";
+    return this.removeAsterisks(text);
   }
 
   async generateSummary(prompt: string): Promise<string> {
@@ -215,6 +231,7 @@ export class GeminiService {
       }
     });
 
-    return result.text || "요약을 생성하지 못했습니다.";
+    const text = result.text || "요약을 생성하지 못했습니다.";
+    return this.removeAsterisks(text);
   }
 }
