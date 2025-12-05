@@ -52,9 +52,9 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
   };
 
   const tabs = [
-    { id: TabType.OBSERVATION, label: '말씀관찰', icon: '🔍', desc: '하나님 찾기 & 팩트체크' },
-    { id: TabType.INTERPRETATION, label: '성경주석 해석', icon: '💡', desc: '영적 의미와 신학적 배경' },
-    { id: TabType.APPLICATION, label: '말씀적용', icon: '✨', desc: '구역 모임 실천 질문' },
+    { id: TabType.OBSERVATION, label: '말씀관찰', icon: '🔍' },
+    { id: TabType.INTERPRETATION, label: '성경주석 해석', icon: '💡' },
+    { id: TabType.APPLICATION, label: '말씀적용', icon: '✨' },
   ];
 
   return (
@@ -80,49 +80,44 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
       </div>
 
       <div className="p-6 min-h-[200px]">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="text-xs font-semibold text-stone-400 uppercase tracking-widest">
-            {tabs.find(t => t.id === activeTab)?.desc}
-          </span>
-          {content[activeTab] && (
-            <div className="flex gap-2">
+        {content[activeTab] && (
+          <div className="mb-4 flex justify-end gap-2">
+            <button
+              onClick={() => handleCopy(content[activeTab]!, tabs.find(t => t.id === activeTab)?.label || '')}
+              className="px-4 py-2 text-sm bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors flex items-center gap-1"
+              title="이 탭 내용 복사"
+            >
+              <span>📋</span> 복사
+            </button>
+            {(content.observation || content.interpretation || content.application) && (
               <button
-                onClick={() => handleCopy(content[activeTab]!, tabs.find(t => t.id === activeTab)?.label || '')}
-                className="px-3 py-1 text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors flex items-center gap-1"
-                title="이 탭 내용 복사"
+                onClick={handleShare}
+                className="px-4 py-2 text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition-colors flex items-center gap-1"
+                title="전체 내용 공유 링크 생성"
               >
-                <span>📋</span> 복사
+                <span>🔗</span> 공유
               </button>
-              {(content.observation || content.interpretation || content.application) && (
-                <button
-                  onClick={handleShare}
-                  className="px-3 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition-colors flex items-center gap-1"
-                  title="전체 내용 공유 링크 생성"
-                >
-                  <span>🔗</span> 공유
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-10 text-stone-400">
             <div className="w-8 h-8 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-4"></div>
-            <p className="animate-pulse">묵상 내용을 깊이 생각하고 있습니다...</p>
+            <p className="animate-pulse text-base">묵상 내용을 깊이 생각하고 있습니다...</p>
           </div>
         ) : content[activeTab] ? (
           <div className="prose prose-stone max-w-none animate-fade-in">
-            <div className="whitespace-pre-wrap text-stone-700 leading-relaxed bg-stone-50 p-4 rounded-xl border border-stone-100">
+            <div className="whitespace-pre-wrap text-base text-stone-700 leading-relaxed bg-stone-50 p-4 rounded-xl border border-stone-100">
               {content[activeTab]}
             </div>
           </div>
         ) : (
           <div className="text-center py-10">
-            <p className="text-stone-500 mb-4">아직 생성된 묵상 내용이 없습니다.</p>
+            <p className="text-stone-500 mb-4 text-base">아직 생성된 묵상 내용이 없습니다.</p>
             <button 
               onClick={() => onGenerate(activeTab)}
-              className="px-6 py-2 bg-amber-100 text-amber-800 rounded-full hover:bg-amber-200 font-semibold transition-colors"
+              className="px-6 py-2 bg-amber-100 text-amber-800 rounded-full hover:bg-amber-200 font-semibold transition-colors text-base"
             >
               묵상 내용 생성하기
             </button>

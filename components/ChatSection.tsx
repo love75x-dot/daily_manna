@@ -23,17 +23,17 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
   return (
     <section className="bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden flex flex-col h-[500px]">
       <div className="p-4 bg-stone-800 text-amber-50 border-b border-stone-700 flex items-center justify-between">
-        <h3 className="font-bold flex items-center gap-2">
+        <h3 className="font-bold flex items-center gap-2 text-base">
           <span>💬</span> AI 신앙 동역자
         </h3>
-        <span className="text-xs opacity-70">성경적 답변 가이드</span>
+        <span className="text-sm opacity-70">성경적 답변 가이드</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 bg-stone-50 space-y-4" ref={scrollRef}>
         {history.length === 0 && (
           <div className="text-center text-stone-400 py-10 px-6">
             <p className="mb-2 text-3xl">👋</p>
-            <p>"구역원들이 어려운 질문을 했나요?"</p>
+            <p className="text-base">"구역원들이 어려운 질문을 했나요?"</p>
             <p className="text-sm mt-2">무엇이든 물어보시면 성경적 근거로 답변해드립니다.</p>
           </div>
         )}
@@ -45,7 +45,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
                 ? 'bg-stone-700 text-white rounded-br-none' 
                 : 'bg-white text-stone-800 border border-stone-200 rounded-bl-none'
             }`}>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.text}</p>
+              <p className="whitespace-pre-wrap text-base leading-relaxed">{msg.text}</p>
             </div>
           </div>
         ))}
