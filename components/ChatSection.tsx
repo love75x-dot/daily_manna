@@ -24,7 +24,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
     <section className="bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden flex flex-col h-[500px]">
       <div className="p-4 bg-stone-800 text-amber-50 border-b border-stone-700 flex items-center justify-between">
         <h3 className="font-bold flex items-center gap-2">
-          <span>💬</span> AI 목회 멘토
+          <span>💬</span> AI 신앙 동역자
         </h3>
         <span className="text-xs opacity-70">성경적 답변 가이드</span>
       </div>
