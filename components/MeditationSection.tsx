@@ -8,10 +8,12 @@ interface MeditationSectionProps {
   isLoading: boolean;
   hasBibleText: boolean;
   onGenerate: (tab: TabType) => void;
+  bibleReference?: string;
+  bibleText?: string;
 }
 
 export const MeditationSection: React.FC<MeditationSectionProps> = ({
-  activeTab, setActiveTab, content, isLoading, hasBibleText, onGenerate
+  activeTab, setActiveTab, content, isLoading, hasBibleText, onGenerate, bibleReference, bibleText
 }) => {
   if (!hasBibleText) return null;
 
@@ -20,6 +22,33 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
     if (!content[tab]) {
       onGenerate(tab);
     }
+  };
+
+  const handleCopy = (text: string, tabName: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`${tabName} 내용이 복사되었습니다!`);
+    }).catch(() => {
+      alert('복사에 실패했습니다.');
+    });
+  };
+
+  const handleShare = () => {
+    const shareData = {
+      reference: bibleReference || '',
+      text: bibleText || '',
+      observation: content.observation || '',
+      interpretation: content.interpretation || '',
+      application: content.application || '',
+    };
+    
+    const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?shared=${encoded}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert('공유 링크가 복사되었습니다!\n이 링크를 받는 사람은 API 키 없이 내용을 볼 수 있습니다.');
+    }).catch(() => {
+      alert('링크 복사에 실패했습니다.');
+    });
   };
 
   const tabs = [
@@ -51,10 +80,30 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
       </div>
 
       <div className="p-6 min-h-[200px]">
-        <div className="mb-4 text-center">
-             <span className="text-xs font-semibold text-stone-400 uppercase tracking-widest">
-                {tabs.find(t => t.id === activeTab)?.desc}
-             </span>
+        <div className="mb-4 flex items-center justify-between">
+          <span className="text-xs font-semibold text-stone-400 uppercase tracking-widest">
+            {tabs.find(t => t.id === activeTab)?.desc}
+          </span>
+          {content[activeTab] && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleCopy(content[activeTab]!, tabs.find(t => t.id === activeTab)?.label || '')}
+                className="px-3 py-1 text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors flex items-center gap-1"
+                title="이 탭 내용 복사"
+              >
+                <span>📋</span> 복사
+              </button>
+              {(content.observation || content.interpretation || content.application) && (
+                <button
+                  onClick={handleShare}
+                  className="px-3 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition-colors flex items-center gap-1"
+                  title="전체 내용 공유 링크 생성"
+                >
+                  <span>🔗</span> 공유
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {isLoading ? (

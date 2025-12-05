@@ -26,13 +26,38 @@ export default function App() {
     isLoadingChat: false,
   });
 
-  // Load API Key from local storage on mount
+  const [isSharedView, setIsSharedView] = useState(false);
+
+  // Load API Key from local storage on mount and check for shared content
   useEffect(() => {
-    const storedKey = localStorage.getItem('gemini_api_key');
-    if (storedKey) {
-      setState(prev => ({ ...prev, apiKey: storedKey }));
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedData = urlParams.get('shared');
+    
+    if (sharedData) {
+      // Shared view mode
+      try {
+        const decoded = JSON.parse(decodeURIComponent(atob(sharedData)));
+        setState(prev => ({
+          ...prev,
+          bibleData: { reference: decoded.reference, text: decoded.text },
+          meditation: {
+            observation: decoded.observation,
+            interpretation: decoded.interpretation,
+            application: decoded.application,
+          },
+        }));
+        setIsSharedView(true);
+      } catch (error) {
+        console.error('Failed to parse shared data:', error);
+      }
     } else {
-      setState(prev => ({ ...prev, showSettings: true }));
+      // Normal mode - load API key
+      const storedKey = localStorage.getItem('gemini_api_key');
+      if (storedKey) {
+        setState(prev => ({ ...prev, apiKey: storedKey }));
+      } else {
+        setState(prev => ({ ...prev, showSettings: true }));
+      }
     }
   }, []);
 
@@ -172,14 +197,44 @@ ${state.meditation.application || state.meditation.observation || "함께 묵상
         hasKey={!!state.apiKey}
       />
 
+      {isSharedView && (
+        <div className="max-w-3xl mx-auto px-4 py-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+            <span className="text-2xl">👀</span>
+            <div>
+              <p className="font-bold text-amber-900">공유된 묵상 내용입니다</p>
+              <p className="text-sm text-amber-700">누군가가 공유한 말씀 묵상을 보고 계십니다.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="max-w-3xl mx-auto px-4 py-6">
-        <BibleSection 
-          bibleInput={state.bibleInput}
-          setBibleInput={(val) => setState(prev => ({ ...prev, bibleInput: val }))}
-          onSearch={handleBibleSearch}
-          isLoading={state.isLoadingBible}
-          bibleData={state.bibleData}
-        />
+        {!isSharedView && (
+          <BibleSection 
+            bibleInput={state.bibleInput}
+            setBibleInput={(val) => setState(prev => ({ ...prev, bibleInput: val }))}
+            onSearch={handleBibleSearch}
+            isLoading={state.isLoadingBible}
+            bibleData={state.bibleData}
+          />
+        )}
+
+        {isSharedView && state.bibleData && (
+          <section className="bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden mb-6">
+            <div className="p-6 bg-[#fffaf0] relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-200/20 via-amber-400/20 to-amber-200/20"></div>
+              <h2 className="text-2xl font-bold text-stone-800 mb-4 text-center border-b-2 border-amber-100 pb-4">
+                {state.bibleData.reference}
+              </h2>
+              <div className="prose prose-stone max-w-none">
+                <p className="whitespace-pre-wrap text-lg leading-relaxed text-stone-800 font-serif">
+                  {state.bibleData.text}
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
 
         <MeditationSection 
           activeTab={state.activeTab}
@@ -188,28 +243,22 @@ ${state.meditation.application || state.meditation.observation || "함께 묵상
           isLoading={state.isLoadingMeditation}
           hasBibleText={!!state.bibleData}
           onGenerate={(tab) => handleGenerateMeditation(tab)}
+          bibleReference={state.bibleData?.reference}
+          bibleText={state.bibleData?.text}
         />
 
-        <ChatSection 
-          history={state.chatHistory}
-          input={state.chatInput}
-          setInput={(val) => setState(prev => ({ ...prev, chatInput: val }))}
-          onSend={handleChatSend}
-          isLoading={state.isLoadingChat}
-        />
+        {!isSharedView && (
+          <ChatSection 
+            history={state.chatHistory}
+            input={state.chatInput}
+            setInput={(val) => setState(prev => ({ ...prev, chatInput: val }))}
+            onSend={handleChatSend}
+            isLoading={state.isLoadingChat}
+          />
+        )}
       </main>
 
-      {/* Floating Share Button */}
-      {state.bibleData && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
-          <button 
-            onClick={handleShare}
-            className="flex items-center gap-2 bg-[#FEE500] hover:bg-[#FDD835] text-[#3c1e1e] px-6 py-3 rounded-full shadow-lg font-bold transition-transform hover:scale-105"
-          >
-            <span className="text-xl">💬</span> 카카오톡 공유 복사
-          </button>
-        </div>
-      )}
+      {/* Floating Share Button - 카카오톡 공유 버튼 제거 */}
 
       <SettingsModal 
         isOpen={state.showSettings}
