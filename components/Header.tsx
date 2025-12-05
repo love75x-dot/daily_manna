@@ -11,7 +11,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, hasKey }) => {
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-2xl">✝️</span>
-          <h1 className="text-xl font-bold text-stone-800 tracking-tight">AI 목회비서</h1>
+          <h1 className="text-xl font-bold text-stone-800 tracking-tight">매일의 만나(@daily_manna)</h1>
         </div>
         <button 
           onClick={onOpenSettings}

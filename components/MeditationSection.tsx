@@ -23,9 +23,9 @@ export const MeditationSection: React.FC<MeditationSectionProps> = ({
   };
 
   const tabs = [
-    { id: TabType.OBSERVATION, label: '관찰', icon: '🔍', desc: '하나님 찾기 & 팩트체크' },
-    { id: TabType.INTERPRETATION, label: '해석', icon: '💡', desc: '영적 의미와 신학적 배경' },
-    { id: TabType.APPLICATION, label: '적용', icon: '✨', desc: '구역 모임 실천 질문' },
+    { id: TabType.OBSERVATION, label: '말씀관찰', icon: '🔍', desc: '하나님 찾기 & 팩트체크' },
+    { id: TabType.INTERPRETATION, label: '성경주석 해석', icon: '💡', desc: '영적 의미와 신학적 배경' },
+    { id: TabType.APPLICATION, label: '말씀적용', icon: '✨', desc: '구역 모임 실천 질문' },
   ];
 
   return (
