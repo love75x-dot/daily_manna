@@ -94,13 +94,8 @@ export const KakaoShareModal: React.FC<KakaoShareModalProps> = ({
       6. 특수기호는 ', ", (), [], {}, <> 만 사용
       `;
 
-      const models = geminiService['getModel']();
-      const result = await models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-
-      setSummary(result.text || '요약 생성에 실패했습니다.');
+      const result = await geminiService.generateSummary(prompt);
+      setSummary(result || '요약 생성에 실패했습니다.');
       setIsGenerating(false);
     } catch (error) {
       console.error(error);

@@ -147,4 +147,18 @@ export class GeminiService {
 
     return result.text || "답변을 생성할 수 없습니다.";
   }
+
+  async generateSummary(prompt: string): Promise<string> {
+    const models = this.getModel();
+    
+    const result = await models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+      }
+    });
+
+    return result.text || "요약을 생성하지 못했습니다.";
+  }
 }
