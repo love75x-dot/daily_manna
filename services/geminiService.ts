@@ -54,13 +54,14 @@ export class GeminiService {
   }
 
   private removeAsterisks(text: string): string {
-    // 모든 별표 기호를 제거 (*, **, ___, 등)
+    // 모든 별표 기호와 마크다운 강조 문법 제거
     return text
-      .replace(/\*\*/g, '')  // ** 제거
-      .replace(/\*/g, '')    // * 제거
-      .replace(/___/g, '')   // ___ 제거
-      .replace(/__/g, '')    // __ 제거
-      .replace(/_([^_\s])/g, '$1'); // 단일 _ 제거 (밑줄이 아닌 경우)
+      .replace(/\*\*\*(.+?)\*\*\*/g, '$1')  // *** 제거
+      .replace(/\*\*(.+?)\*\*/g, '$1')      // ** 제거
+      .replace(/\*(.+?)\*/g, '$1')          // * 제거
+      .replace(/___(.+?)___/g, '$1')        // ___ 제거
+      .replace(/__(.+?)__/g, '$1')          // __ 제거
+      .replace(/_(.+?)_/g, '$1');           // _ 제거 (양쪽에 _가 있는 경우만)
   }
 
   private normalizeBibleReference(reference: string): string {
