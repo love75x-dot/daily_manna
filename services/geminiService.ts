@@ -54,14 +54,14 @@ export class GeminiService {
   }
 
   private removeAsterisks(text: string): string {
-    // 모든 별표 기호와 마크다운 강조 문법 제거
+    // 마크다운 강조 문법만 제거 (단어 단위로만 매칭)
     return text
-      .replace(/\*\*\*(.+?)\*\*\*/g, '$1')  // *** 제거
-      .replace(/\*\*(.+?)\*\*/g, '$1')      // ** 제거
-      .replace(/\*(.+?)\*/g, '$1')          // * 제거
-      .replace(/___(.+?)___/g, '$1')        // ___ 제거
-      .replace(/__(.+?)__/g, '$1')          // __ 제거
-      .replace(/_(.+?)_/g, '$1');           // _ 제거 (양쪽에 _가 있는 경우만)
+      .replace(/\*\*\*(\S[^*]*?\S)\*\*\*/g, '$1')  // ***단어*** 제거
+      .replace(/\*\*(\S[^*]*?\S)\*\*/g, '$1')      // **단어** 제거
+      .replace(/\*(\S[^*]*?\S)\*/g, '$1')          // *단어* 제거
+      .replace(/___(\S[^_]*?\S)___/g, '$1')        // ___단어___ 제거
+      .replace(/__(\S[^_]*?\S)__/g, '$1')          // __단어__ 제거
+      .replace(/_(\S[^_\s]*?\S)_/g, '$1');         // _단어_ 제거
   }
 
   private normalizeBibleReference(reference: string): string {
@@ -132,8 +132,8 @@ export class GeminiService {
       }
     });
     
-    const text = result.text || "본문을 찾을 수 없습니다.";
-    return this.removeAsterisks(text);
+    // 성경 본문은 별표 제거 없이 그대로 반환
+    return result.text || "본문을 찾을 수 없습니다.";
   }
 
   async getMeditation(type: TabType, bibleText: string): Promise<string> {
