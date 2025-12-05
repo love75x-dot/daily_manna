@@ -1,0 +1,5 @@
+{
+  "name": "AI Ministry Assistant",
+  "description": "A spiritual tool for cell leaders to generate Quiet Time content, biblical commentary, and answer theological questions using Gemini API.",
+  "requestFramePermissions": []
+}
